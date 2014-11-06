@@ -1,0 +1,185 @@
+<html>
+
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<!-- <script type="text/javascript" src="http://benvanik.github.io/WebGL-Inspector/core/embed.js" async></script> -->
+
+<script id="shader-fs" type="x-shader/x-fragment">
+	precision mediump float;
+	varying vec4 vColor;
+
+	void main(void) {
+		gl_FragColor = vColor;
+	}
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+
+	attribute vec3 aVertexPosition;
+	attribute vec4 aVertexColor;
+
+
+	uniform mat4 uMVMatrix;
+	uniform mat4 uPMatrix;
+
+	varying vec4 vColor;
+
+	void main(void) {
+		gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+		vColor = aVertexColor;
+	}
+</script>
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="init_buffers.js"></script>
+<script type="text/javascript" src="draw_scene.js"></script>
+<script type="text/javascript" src="controls.js"></script>
+<script type="text/javascript" src="transformations.js"></script>
+
+
+<script type="text/javascript">
+
+	var gl;
+	function initGL(canvas) {
+		try {
+			gl = canvas.getContext("experimental-webgl");
+			gl.viewportWidth = canvas.width;
+			gl.viewportHeight = canvas.height;
+		} catch (e) {
+		}
+		if (!gl) {
+			console.error("Could not initialise WebGL");
+			document.getElementById("messages").innerText = "Could not initialise WebGL";
+		}
+	}
+
+
+	function getShader(gl, id) {
+		var shaderScript = document.getElementById(id);
+		if (!shaderScript) {
+			return null;
+		}
+
+		var str = "";
+		var k = shaderScript.firstChild;
+		while (k) {
+			if (k.nodeType == 3) {
+				str += k.textContent;
+			}
+			k = k.nextSibling;
+		}
+
+		var shader;
+		if (shaderScript.type == "x-shader/x-fragment") {
+			shader = gl.createShader(gl.FRAGMENT_SHADER);
+		} else if (shaderScript.type == "x-shader/x-vertex") {
+			shader = gl.createShader(gl.VERTEX_SHADER);
+		} else {
+			return null;
+		}
+
+		gl.shaderSource(shader, str);
+		gl.compileShader(shader);
+
+		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+			alert(gl.getShaderInfoLog(shader));
+			return null;
+		}
+
+		return shader;
+	}
+
+
+	var shaderProgram;
+
+	function initShaders() {
+		var fragmentShader = getShader(gl, "shader-fs");
+		var vertexShader = getShader(gl, "shader-vs");
+
+		shaderProgram = gl.createProgram();
+		gl.attachShader(shaderProgram, vertexShader);
+		gl.attachShader(shaderProgram, fragmentShader);
+		gl.linkProgram(shaderProgram);
+
+		if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+			alert("Could not initialise shaders");
+		}
+
+		gl.useProgram(shaderProgram);
+
+		shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+		gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+		shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+		gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+
+		shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+		shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	}
+
+
+	var mvMatrix = mat4.create();
+	var pMatrix = mat4.create();
+
+	function degToRad(degrees) {
+        return degrees * Math.PI / 180;
+    }
+
+	function webGLStart() {
+		var canvas = document.getElementById("canvas");
+		initGL(canvas);
+		initShaders();
+		init_buffers();
+		build_scene();
+		keyboard_input();
+
+		gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		gl.enable(gl.DEPTH_TEST);
+		gl.blendFunc(gl.SRC_ALPHA, gl.ONE); // transparency
+		gl.enable(gl.BLEND);
+		gl.enable(gl.CULL_FACE);
+
+		//document.addEventListener("keydown", func);
+
+		tick();
+	}
+
+	function tick() {
+    	requestAnimationFrame(tick); // webgl-utils.js
+    	draw_scene();
+    	animate();
+    }
+
+    
+	var lastTime = 0;
+
+	function animate() {
+		var timeNow = new Date().getTime();
+		if (lastTime != 0) {
+			var elapsed = timeNow - lastTime;
+			scene[0].rotation += (90 * elapsed) / 1000.0; // pyramid
+			scene[1].rotation += (75 * elapsed) / 1000.0; // cube
+			scene[2].rotation += (60 * elapsed) / 1000.0; // cylinder
+		}
+		lastTime = timeNow;
+	}
+
+    var selected_object_id = 0;
+
+
+</script>
+
+
+</head>
+
+
+<body onload="webGLStart();">
+
+	<canvas id="canvas" style="border: none;" width="1000" height="1000"></canvas>
+	<div id="messages"></div>
+
+</body>
+
+</html>
