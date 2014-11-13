@@ -16,6 +16,7 @@ var coordinate_system;
 var pyramid;
 var cube;
 var cylinder;
+var sphere;
 
 function init_buffers() {
 
@@ -23,6 +24,7 @@ function init_buffers() {
 	pyramid = new Shape();
 	cube = new Shape();
 	cylinder = new Shape();
+	sphere = new Shape();
 
 	var vertices = [
 		1.5, 0.0, 0.0,
@@ -58,7 +60,11 @@ function init_buffers() {
 
 	coordinate_system.elementType = gl.LINES;
 
-	////////
+
+
+
+
+	// triangle
 
     var vertices = [
     	-1.0, -1.0,  1.0,	//  0
@@ -142,6 +148,10 @@ function init_buffers() {
 
 
 
+
+
+
+
     // cube
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, cube.positionBuffer);
@@ -215,6 +225,10 @@ function init_buffers() {
 
 
 
+
+
+
+
 // cylinder
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, cylinder.positionBuffer);
@@ -282,4 +296,64 @@ function init_buffers() {
 
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cylinderVertexIndices), gl.STATIC_DRAW);
 	cylinder.indexBuffer.numItems = cylinderVertexIndices.length;
+
+
+
+
+
+
+// sphere
+
+
+	var positions = [];
+	var unpackedColors = [];
+	var sphereVertexIndices = [];
+
+	var n = 24;
+	var ring_num = 12;
+
+	var vertexIndexForRingAndN = function (j, i) {
+		return (i%n)+j*n;
+	};
+
+	for (var j = 0; j<ring_num; j++) {
+		var r = Math.sin((j/(ring_num-1))*Math.PI);
+		var height = Math.cos((j/(ring_num-1))*Math.PI);
+		for (var i = 0; i<n; i++) {
+			positions.push(r*Math.sin((i/n)*2*Math.PI)); // x
+			positions.push(r*Math.cos((i/n)*2*Math.PI)); // y
+			height_pos = height;
+			positions.push(height);
+
+			if (j < ring_num-1) {
+
+				var aa = vertexIndexForRingAndN(j,   i);
+				var ab = vertexIndexForRingAndN(j,   i+1);
+				var ba = vertexIndexForRingAndN(j+1, i);
+				var bb = vertexIndexForRingAndN(j+1, i+1);
+
+				sphereVertexIndices = sphereVertexIndices.concat([aa, ab, bb]);
+				sphereVertexIndices = sphereVertexIndices.concat([aa, bb, ba]);
+			}
+
+		}
+	}
+
+	var color = [1.0, 1.0, 0.0, 1.0]; // yellow
+
+	for (var j = 0; j<ring_num; j++)
+		for (var i = 0; i<n; i++) 
+			unpackedColors = unpackedColors.concat(color);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, sphere.positionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+	sphere.positionBuffer.numItems = n*ring_num;
+
+	gl.bindBuffer(gl.ARRAY_BUFFER, sphere.colorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
+	sphere.colorBuffer.numItems = n*ring_num;
+
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere.indexBuffer);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(sphereVertexIndices), gl.STATIC_DRAW);
+	sphere.indexBuffer.numItems = sphereVertexIndices.length;
 }

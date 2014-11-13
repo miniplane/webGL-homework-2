@@ -16,14 +16,7 @@ function build_scene() {
 		new Object3D(pyramid),
 		new Object3D(cube),
 		new Object3D(cylinder),
-
-		new Object3D(pyramid),
-		new Object3D(cube),
-		new Object3D(cylinder),
-
-		new Object3D(pyramid),
-		new Object3D(cube),
-		new Object3D(cylinder)
+		new Object3D(sphere)
 
 	];
 
@@ -32,12 +25,6 @@ function build_scene() {
 	mat4.translate(scene[2].posRotMatrix, [ 3.0, 4.0, -15.0]);
 
 	mat4.translate(scene[3].posRotMatrix, [ -3.0, 0.0, -15.0]);
-	mat4.translate(scene[4].posRotMatrix, [ 0.0, 0.0, -15.0]);
-	mat4.translate(scene[5].posRotMatrix, [ 3.0, 0.0, -15.0]);
-
-	mat4.translate(scene[6].posRotMatrix, [ -3.0, -4.0, -15.0]);
-	mat4.translate(scene[7].posRotMatrix, [ 0.0, -4.0, -15.0]);
-	mat4.translate(scene[8].posRotMatrix, [ 3.0, -4.0, -15.0]);
 
 };
 
