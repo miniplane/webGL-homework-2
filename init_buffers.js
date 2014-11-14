@@ -1,3 +1,4 @@
+
 function Shape() {
 	this.positionBuffer = gl.createBuffer();
 	this.colorBuffer = gl.createBuffer();
