@@ -1,19 +1,22 @@
 
 //var bunny;
+//var teapot;
 
 function loadScene () {
 
-    bunny = new Shape();
+    //bunny = new Shape();
+    teapot = new Shape();
 
-    loadModel("bunny.json", "bunny");        
+    //loadModel("bunny.json", bunny);
+    loadModel("teapot.json", teapot);
 }
 
-function loadModel (jsonPath, modelName) {
+function loadModel (jsonPath, model) {
     var request = $.getJSON(jsonPath, function () {}); // waits until json is loaded
     request.done(function (data) {
 
         //init(data, modelName);
-        initBuffers(bunny, data, gl, shaderProgram);
+        initBuffers(model, data, gl, shaderProgram);
 
         // self.models[modelName] = m;
         // self.modelsNameMapping.push(modelName);
@@ -41,11 +44,11 @@ function initBuffers (shape, data, gl, shaderProgram) {
     gl.bindBuffer(gl.ARRAY_BUFFER, shape.colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
     shape.colorBuffer.numItems = unpackedColors.length;
-    shape.positionBuffer.itemSize = 4;
+    shape.colorBuffer.itemSize = 4;
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, shape.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(loaded_indices), gl.STATIC_DRAW);
-    shape.colorBuffer.numItems = loaded_indices.length;
+    shape.indexBuffer.numItems = loaded_indices.length;
 
 
     // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, shape.positionBuffer.itemSize, gl.FLOAT, false, 0, 0);

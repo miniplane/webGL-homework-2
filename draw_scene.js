@@ -18,7 +18,8 @@ function build_scene() {
 		new Object3D(cube),
 		new Object3D(cylinder),
 		new Object3D(sphere),
-		new Object3D(bunny)
+		//new Object3D(bunny),
+		new Object3D(teapot)
 	];
 
 	mat4.translate(scene[0].posRotMatrix, [-3.0, 4.0, -15.0]);
@@ -26,6 +27,7 @@ function build_scene() {
 	mat4.translate(scene[2].posRotMatrix, [ 3.0, 4.0, -15.0]);
 	mat4.translate(scene[3].posRotMatrix, [-3.0, 0.0, -15.0]);
 	mat4.translate(scene[4].posRotMatrix, [ 0.0, 0.0, -15.0]);
+
 
 
 };
