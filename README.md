@@ -2,6 +2,7 @@ webGL-homework-2
 ================
 
 super cool 10/10 solar system sculpture (ok, maybe 3/10 in retrospect)
+Try here: http://miniplane.github.io/webGL-homework-2/
 
 The sculpture can be transformed like the shapes from the previous lab:
 
