@@ -18,7 +18,7 @@ function Object3D(shape, children) {
 }
 
 function spinner() {
-	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed), [0, 0, 1]);
+	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed), [0, 1, 0]);
 }
 
 var selected;
@@ -27,27 +27,61 @@ var scene;
 function build_scene() {
 	loadScene();
 	scene = [
-		new Object3D(pyramid),
-		new Object3D(cube, [
-			new Object3D(teapot)
-		]),
-		new Object3D(cylinder),
-		new Object3D(sphere),
+		new Object3D(null, [
+			new Object3D(sphere),	//sun
+			new Object3D(cylinder), // ground
+			new Object3D(cylinder), // ground -> sun
+			new Object3D(cylinder), // sun - > planet1
+			new Object3D(cylinder), // sun - > planet2
+			new Object3D(null, [
+				new Object3D(sphere) // planet1
+			]),
+			new Object3D(null, [
+				new Object3D(sphere) // planet2
+			])
+		])
+
+		//new Object3D(cylinder),
 		//new Object3D(bunny),
-		new Object3D(teapot)
+		//new Object3D(teapot)
 	];
 
-	mat4.translate(scene[0].posRotMatrix, [-3.0, 4.0, -15.0]);
-	mat4.translate(scene[1].posRotMatrix, [ 0.0, 4.0, -15.0]);
-	mat4.translate(scene[2].posRotMatrix, [ 3.0, 4.0, -15.0]);
-	mat4.translate(scene[3].posRotMatrix, [-3.0, 0.0, -15.0]);
-	mat4.translate(scene[4].posRotMatrix, [ 0.0, 0.0, -15.0]);
-
-	mat4.translate(scene[1].children[0].posRotMatrix, [ 0.0, 1.0, 0.0]);
-
 	scene[0].updateFunc = spinner;
-	scene[4].updateFunc = spinner;
-	scene[1].children[0].updateFunc = spinner;
+
+	// sun
+	mat4.translate(scene[0].children[0].posRotMatrix, [0.0, 3.0, 0.0]);
+
+	// ground
+	mat4.translate(scene[0].posRotMatrix, [0.0, -4.0, -15.0]);
+	mat4.rotate(scene[0].children[1].posRotMatrix, degToRad(90), [1, 0, 0]); // x clockwise
+	mat4.scale(scene[0].children[1].sclMatrix, [2, 2, 0.1]);
+
+	// ground -> sun
+	mat4.translate(scene[0].children[2].posRotMatrix, [0.0, 1.1, 0.0]);
+	mat4.rotate(scene[0].children[2].posRotMatrix, degToRad(90), [1, 0, 0]); // x clockwise
+	mat4.scale(scene[0].children[2].sclMatrix, [0.05, 0.05, 1]);
+
+	// sun -> planet1
+	mat4.translate(scene[0].children[4].posRotMatrix, [0.0, 3, 1.3]);
+	mat4.scale(scene[0].children[4].sclMatrix, [0.05, 0.05, 2]);
+
+
+	// planet1
+	mat4.translate(scene[0].children[5].children[0].posRotMatrix, [0.0, 3, 3.5]);
+	mat4.scale(scene[0].children[5].children[0].sclMatrix, [0.4, 0.4, 0.4]);
+
+	// sun - > planet2
+	mat4.rotate(scene[0].children[3].posRotMatrix, degToRad(160), [0, 1, 0]); // x clockwise
+	mat4.translate(scene[0].children[3].posRotMatrix, [0.0, 3, 1.5]);
+	mat4.scale(scene[0].children[3].sclMatrix, [0.05, 0.05, 2.3]);
+
+	// planet2
+	mat4.rotate(scene[0].children[6].children[0].posRotMatrix, degToRad(160), [0, 1, 0]);
+	mat4.translate(scene[0].children[6].children[0].posRotMatrix, [0.0, 3, 4]);
+	mat4.scale(scene[0].children[6].children[0].sclMatrix, [0.5, 0.5, 0.5]);
+
+	//scene[4].updateFunc = spinner;
+	//scene[1].children[0].updateFunc = spinner;
 
 };
 
@@ -83,7 +117,8 @@ function draw_scene_subtree(parentmatrix, object) {
 	// send localmatrix to the shader
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, localmatrix);
 
-	draw_object(object.shape);
+	if (object.shape !== null)
+		draw_object(object.shape);
 
 	for (var i in object.children) {
 		draw_scene_subtree(localmatrix, object.children[i]);
