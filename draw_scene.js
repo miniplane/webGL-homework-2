@@ -3,13 +3,14 @@ function Object3D(shape, children) {
 	this.posRotMatrix = mat4.create();
 	this.sclMatrix = mat4.create();
 	this.rotation = 0.0;
+	this.spinspeedfactor = 1;
 
 	if (children !== undefined)
 		this.children = children;
 	else
 		this.children = [];
 
-	this.updateFunc = function() {};
+	this.update_function = function() {};
 
 	mat4.identity(this.posRotMatrix);
 	mat4.identity(this.sclMatrix);
@@ -17,8 +18,12 @@ function Object3D(shape, children) {
 	return this;
 }
 
-function spinner() {
-	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed), [0, 1, 0]);
+function spinnery() {
+	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed*this.spinspeedfactor), [0, 1, 0]);
+}
+
+function spinnerx() {
+	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed*this.spinspeedfactor), [1, 0, 0]);
 }
 
 var selected;
@@ -26,62 +31,83 @@ var scene;
 
 function build_scene() {
 	loadScene();
+
+	var make_planet_on_a_stick = function(planetradius, distance, planettilt, planetchildren) { // (0.4, 3.5)
+		var ch = [
+			new Object3D(cylinder),
+			new Object3D(sphere, planetchildren)
+		];
+
+		var sunradius = 1;
+
+		var stickLength = distance - (sunradius + planetradius);
+		var stickCenter = sunradius + stickLength / 2;
+
+		mat4.translate(ch[0].posRotMatrix, [0, 0, stickCenter]);
+		mat4.scale(ch[0].sclMatrix, [0.05, 0.05, stickLength/2]);
+
+		mat4.translate(ch[1].posRotMatrix, [0, 0, distance]);
+		mat4.rotate(ch[1].posRotMatrix, degToRad(planettilt), [1, 0, 0]);
+		mat4.scale(ch[1].sclMatrix, [planetradius, planetradius, planetradius]);
+
+		return new Object3D(null, ch);
+	};
+
 	scene = [
 		new Object3D(null, [
 			new Object3D(sphere),	//sun
 			new Object3D(cylinder), // ground
 			new Object3D(cylinder), // ground -> sun
-			new Object3D(cylinder), // sun - > planet1
-			new Object3D(cylinder), // sun - > planet2
-			new Object3D(null, [
-				new Object3D(sphere) // planet1
+			make_planet_on_a_stick(0.7, 3.5, 90, [
+				make_planet_on_a_stick(0.5, 3.0, 0),
+				make_planet_on_a_stick(0.6, 2.0, 90, [
+					make_planet_on_a_stick(0.45, 2.5, 0)
+				])
 			]),
-			new Object3D(null, [
-				new Object3D(sphere) // planet2
-			])
+			make_planet_on_a_stick(0.4, 3.5, 80),
 		])
-
-		//new Object3D(cylinder),
-		//new Object3D(bunny),
-		//new Object3D(teapot)
 	];
 
-	scene[0].updateFunc = spinner;
+	scene[0].update_function = spinnery;
 
 	// sun
-	mat4.translate(scene[0].children[0].posRotMatrix, [0.0, 3.0, 0.0]);
+	mat4.translate(scene[0].children[0].posRotMatrix, [0.0, 0.0, 0.0]);
 
 	// ground
-	mat4.translate(scene[0].posRotMatrix, [0.0, -4.0, -15.0]);
+	mat4.translate(scene[0].posRotMatrix, [0.0, -1.0, -15.0]);
+	mat4.translate(scene[0].children[1].posRotMatrix, [0.0, -3.0, 0.0]);
 	mat4.rotate(scene[0].children[1].posRotMatrix, degToRad(90), [1, 0, 0]); // x clockwise
 	mat4.scale(scene[0].children[1].sclMatrix, [2, 2, 0.1]);
 
 	// ground -> sun
-	mat4.translate(scene[0].children[2].posRotMatrix, [0.0, 1.1, 0.0]);
+	mat4.translate(scene[0].children[2].posRotMatrix, [0.0, 1.1-3, 0.0]);
 	mat4.rotate(scene[0].children[2].posRotMatrix, degToRad(90), [1, 0, 0]); // x clockwise
 	mat4.scale(scene[0].children[2].sclMatrix, [0.05, 0.05, 1]);
 
-	// sun -> planet1
-	mat4.translate(scene[0].children[4].posRotMatrix, [0.0, 3, 1.3]);
-	mat4.scale(scene[0].children[4].sclMatrix, [0.05, 0.05, 2]);
-
-
-	// planet1
-	mat4.translate(scene[0].children[5].children[0].posRotMatrix, [0.0, 3, 3.5]);
-	mat4.scale(scene[0].children[5].children[0].sclMatrix, [0.4, 0.4, 0.4]);
-
-	// sun - > planet2
+	// second planet rotation
 	mat4.rotate(scene[0].children[3].posRotMatrix, degToRad(160), [0, 1, 0]); // x clockwise
-	mat4.translate(scene[0].children[3].posRotMatrix, [0.0, 3, 1.5]);
-	mat4.scale(scene[0].children[3].sclMatrix, [0.05, 0.05, 2.3]);
 
-	// planet2
-	mat4.rotate(scene[0].children[6].children[0].posRotMatrix, degToRad(160), [0, 1, 0]);
-	mat4.translate(scene[0].children[6].children[0].posRotMatrix, [0.0, 3, 4]);
-	mat4.scale(scene[0].children[6].children[0].sclMatrix, [0.5, 0.5, 0.5]);
+	// moon1
+	scene[0].children[3].children[1].children[0].update_function = spinnery;
+	scene[0].children[3].children[1].children[0].spinspeedfactor = 5;
 
-	//scene[4].updateFunc = spinner;
-	//scene[1].children[0].updateFunc = spinner;
+	// moon2
+	mat4.rotate(scene[0].children[3].children[1].children[1].posRotMatrix, degToRad(160), [0, 1, 0]);
+	scene[0].children[3].children[1].children[1].update_function = spinnery;
+	scene[0].children[3].children[1].children[1].spinspeedfactor = 3;
+
+	//  734p07 547311i73
+	var teapot_satellite = scene[0].children[3].children[1].children[1].children[1].children[0].children[1];
+	teapot_satellite.shape = null; // have to go deeper
+	teapot_satellite.children = [new Object3D(teapot)];
+	mat4.translate(teapot_satellite.children[0].posRotMatrix, [0, -0.4, 0]);
+	mat4.scale(teapot_satellite.sclMatrix, [1.8, 1.8, 1.8]);
+
+	scene[0].children[3].children[1].children[1].children[1].children[0].update_function = spinnery;
+	scene[0].children[3].children[1].children[1].children[1].children[0].spinspeedfactor = 5;
+
+	teapot_satellite.update_function = spinnerx;
+	teapot_satellite.spinspeedfactor = 30;
 
 };
 
@@ -109,7 +135,7 @@ function draw_scene_subtree(parentmatrix, object) {
 	mat4.set(parentmatrix, localmatrix);
 
 	//mat4.rotate(object.posRotMatrix, degToRad(-10), [0, 0, 1]);
-	object.updateFunc();
+	object.update_function();
 
 	mat4.multiply(localmatrix, object.posRotMatrix);
 	mat4.multiply(localmatrix, object.sclMatrix);
