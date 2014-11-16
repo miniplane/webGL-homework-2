@@ -187,7 +187,7 @@ function init_cube_buffers() {
 
 
 
-function init_cylinder_buffers() {
+function init_cylinder_buffers(n) {
 	cylinder = new Shape();
 
 	gl.bindBuffer(gl.ARRAY_BUFFER, cylinder.positionBuffer);
@@ -197,7 +197,6 @@ function init_cylinder_buffers() {
 	var upperring = [];
 	var lowerring = [];
 
-	var n = 24;
 	for (var i = 0; i<n; i++) {
 		upperring.push(Math.sin((i/n)*2*Math.PI)); // x
 		upperring.push(Math.cos((i/n)*2*Math.PI)); // y
@@ -258,15 +257,12 @@ function init_cylinder_buffers() {
 }
 
 
-function init_sphere_buffers() {
+function init_sphere_buffers(n, ring_num) {
 	sphere = new Shape();
 
 	var positions = [];
 	var unpackedColors = [];
 	var sphereVertexIndices = [];
-
-	var n = 24;
-	var ring_num = 12;
 
 	var vertexIndexForRingAndN = function (j, i) {
 		return (i%n)+j*n;
@@ -359,6 +355,6 @@ function init_buffers() {
 
 	init_pyramid_buffers();
     init_cube_buffers();
-	init_cylinder_buffers();
-	init_sphere_buffers();
+	init_cylinder_buffers(24);
+	init_sphere_buffers(24, 12);
 }
