@@ -9,7 +9,7 @@ function Object3D(shape, children) {
 	else
 		this.children = [];
 
-	this.updateFunc = function(time) {};
+	this.updateFunc = function() {};
 
 	mat4.identity(this.posRotMatrix);
 	mat4.identity(this.sclMatrix);
@@ -18,12 +18,7 @@ function Object3D(shape, children) {
 }
 
 function spinner() {
-	mat4.rotate(this.posRotMatrix, degToRad(-10), [0, 0, 1]);
-}
-
-function waver() {
-	mat4.identity();
-	mat4.rotate(this.posRotMatrix, sin(time), [0, 0, 1]);
+	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed), [0, 0, 1]);
 }
 
 var selected;

@@ -156,18 +156,15 @@
     }
 
     
-	var lastTime = 0;
 
 	function animate() {
 		var timeNow = new Date().getTime();
-		if (lastTime != 0) {
-			var elapsed = timeNow - lastTime;
-			scene[0].rotation += (90 * elapsed) / 1000.0; // pyramid
-			scene[1].rotation += (75 * elapsed) / 1000.0; // cube
-			scene[2].rotation += (60 * elapsed) / 1000.0; // cylinder
-		}
+		elapsed = timeNow - lastTime;
 		lastTime = timeNow;
 	}
+
+	var lastTime = new Date().getTime();
+	var elapsed = 0;
 
     var selected_object_id = 0;
 
