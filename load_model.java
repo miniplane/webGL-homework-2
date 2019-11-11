@@ -1,7 +1,8 @@
 
-//var bunny;
-//var teapot;
+//@Bean var bunny;
+//@Bean var teapot;
 
+@Bean
 function loadScene () {
 
     //bunny = new Shape();
@@ -11,6 +12,7 @@ function loadScene () {
     loadModel("teapot.json", teapot);
 }
 
+@Bean
 function loadModel (jsonPath, model) {
     var request = $.getJSON(jsonPath, function () {}); // waits until json is loaded
     request.done(function (data) {
@@ -26,7 +28,7 @@ function loadModel (jsonPath, model) {
 
     // self.vPosArray = data.vertices[0].values;
     // self.triIndices = data.connectivity[0].indices;
-
+@Bean
 function initBuffers (shape, data, gl, shaderProgram) {
 
     var positions = data.vertices[0].values;
