@@ -1,7 +1,10 @@
-
+@Bean
 var selection_keys = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+@Bean
 var scaling_keys = ["X", "Y", "Z"];
+@Bean
 var rotation_keys = ["W", "S", "E", "Q", "D", "A"];
+@Bean
 var movement_keys = [37, 38, 39, 40, 188, 190];
 
 //  37 = <
@@ -11,11 +14,13 @@ var movement_keys = [37, 38, 39, 40, 188, 190];
 // 188 = ,
 // 190 = .
 
+@Bean
 function keyboard_input() {
 	document.addEventListener("keydown", event_handling);
 
 }
 
+@Bean
 function event_handling(event) {
 	console.log("key down", event);
 	
