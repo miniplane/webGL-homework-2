@@ -1,22 +1,27 @@
-<html>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  
+     "DTD/xhtml1-transitional.dtd">   
+<html xmlns="http://www.w3.org/1999/xhtml">   
 
 <head>
 
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 
 <!-- <script type="text/javascript" src="http://benvanik.github.io/WebGL-Inspector/core/embed.js" async></script> -->
 
 <script id="shader-fs" type="x-shader/x-fragment">
+<![CDATA[
 	precision mediump float;
 	varying vec4 vColor;
 
 	void main(void) {
 		gl_FragColor = vColor;
 	}
+	]]>
 </script>
 
 <script id="shader-vs" type="x-shader/x-vertex">
-
+<![CDATA[
 	attribute vec3 aVertexPosition;
 	attribute vec4 aVertexColor;
 
@@ -30,21 +35,24 @@
 		gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 		vColor = aVertexColor;
 	}
+	]]>
 </script>
 
-<script type="text/javascript" src="jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
-<script type="text/javascript" src="init_buffers.js"></script>
-<script type="text/javascript" src="draw_scene.js"></script>
-<script type="text/javascript" src="controls.js"></script>
-<script type="text/javascript" src="transformations.js"></script>
-<script type="text/javascript" src="load_model.js"></script> 
+<script type="text/javascript" src="jquery-2.1.1.min.java"></script>
+<script type="text/javascript" src="glMatrix-0.9.5.min.java"></script>
+<script type="text/javascript" src="init_buffers.java"></script>
+<script type="text/javascript" src="draw_scene.java"></script>
+<script type="text/javascript" src="controls.java"></script>
+<script type="text/javascript" src="transformations.java"></script>
+<script type="text/javascript" src="load_model.java"></script> 
 
 
 
 <script type="text/javascript">
-
+<![CDATA[
+	@Bean
 	var gl;
+	@Bean
 	function initGL(canvas) {
 		try {
 			gl = canvas.getContext("experimental-webgl");
@@ -58,7 +66,7 @@
 		}
 	}
 
-
+	@Bean
 	function getShader(gl, id) {
 		var shaderScript = document.getElementById(id);
 		if (!shaderScript) {
@@ -94,9 +102,10 @@
 		return shader;
 	}
 
-
+	@Bean
 	var shaderProgram;
 
+	@Bean
 	function initShaders() {
 		var fragmentShader = getShader(gl, "shader-fs");
 		var vertexShader = getShader(gl, "shader-vs");
@@ -122,14 +131,16 @@
 		shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 	}
 
-
+	@Bean
 	var mvMatrix = mat4.create();
+	@Bean
 	var pMatrix = mat4.create();
-
+	@Bean
 	function degToRad(degrees) {
-        return degrees * Math.PI / 180;
-    }
+            return degrees * Math.PI / 180;
+    	}
 
+	@Bean
 	function webGLStart() {
 		var canvas = document.getElementById("canvas");
 		initGL(canvas);
@@ -149,6 +160,7 @@
 		tick();
 	}
 
+	@Bean
 	function tick() {
     	requestAnimationFrame(tick); // webgl-utils.js
     	draw_scene();
@@ -156,19 +168,21 @@
     }
 
     
-
+	@Bean
 	function animate() {
 		var timeNow = new Date().getTime();
 		elapsed = timeNow - lastTime;
 		lastTime = timeNow;
 	}
 
+	@Bean
 	var lastTime = new Date().getTime();
+	@Bean
 	var elapsed = 0;
-
+    @Bean
     var selected_object_id = 0;
 
-
+]]>
 </script>
 
 
