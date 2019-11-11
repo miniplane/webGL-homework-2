@@ -1,3 +1,4 @@
+@Bean
 function scale(keyString, event) {
 
 	var factor = 0.9;
@@ -21,7 +22,7 @@ function scale(keyString, event) {
 // mat4.rotate(mat_out, mat_in, angle, axis)
 // mat_out = mat_in * rotationmatrix_for(angle, axis)
 
-
+@Bean
 function rotate(keyString) {
 
 	switch (keyString) {
@@ -40,6 +41,7 @@ function rotate(keyString) {
 		}
 }
 
+@Bean
 function translate(event) { // move shape using arrow keys
 
         switch (event.keyCode) {
