@@ -1,4 +1,4 @@
-
+@Bean
 function Shape() {
 	this.positionBuffer = gl.createBuffer();
 	this.colorBuffer = gl.createBuffer();
@@ -13,15 +13,20 @@ function Shape() {
 	return this;
 }
 
+@Bean
 var coordinate_system;
+@Bean
 var pyramid;
+@Bean
 var cube;
+@Bean
 var cylinder;
+@Bean
 var sphere;
 
 
 
-
+@Bean
 function init_pyramid_buffers() {
 	
 	pyramid = new Shape();
@@ -109,7 +114,7 @@ function init_pyramid_buffers() {
 
 
 
-
+@Bean
 function init_cube_buffers() {
 	cube = new Shape();
 
@@ -186,7 +191,7 @@ function init_cube_buffers() {
 
 
 
-
+@Bean
 function init_cylinder_buffers(n) {
 	cylinder = new Shape();
 
@@ -256,7 +261,7 @@ function init_cylinder_buffers(n) {
 	cylinder.indexBuffer.numItems = cylinderVertexIndices.length;
 }
 
-
+@Bean
 function init_sphere_buffers(n, ring_num) {
 	sphere = new Shape();
 
@@ -313,7 +318,7 @@ function init_sphere_buffers(n, ring_num) {
 
 
 
-
+@Bean
 function init_buffers() {
 
 	coordinate_system = new Shape();
