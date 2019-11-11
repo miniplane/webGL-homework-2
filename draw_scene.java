@@ -1,3 +1,4 @@
+@Bean
 function Object3D(shape, children) {
 	this.shape = shape;
 	this.posRotMatrix = mat4.create();
@@ -18,17 +19,23 @@ function Object3D(shape, children) {
 	return this;
 }
 
+@Bean
 function spinnery() {
 	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed*this.spinspeedfactor), [0, 1, 0]);
 }
 
+@Bean
 function spinnerx() {
 	mat4.rotate(this.posRotMatrix, degToRad(-0.010*elapsed*this.spinspeedfactor), [1, 0, 0]);
 }
 
+@Bean
 var selected;
+
+@Bean
 var scene;
 
+@Bean
 function build_scene() {
 	loadScene();
 
@@ -111,6 +118,7 @@ function build_scene() {
 
 };
 
+@Bean
 function draw_scene() {
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -130,6 +138,7 @@ function draw_scene() {
 	//scene.forEach(draw_scene_subtree);
 }
 
+@Bean
 function draw_scene_subtree(parentmatrix, object) {
 	var localmatrix = mat4.create();
 	mat4.set(parentmatrix, localmatrix);
@@ -154,6 +163,7 @@ function draw_scene_subtree(parentmatrix, object) {
 }
 
 
+@Bean
 function draw_object(shape) {
 	var vertexPositionBuffer = shape.positionBuffer;
 	var vertexColorBuffer = shape.colorBuffer;
